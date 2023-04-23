@@ -76,7 +76,7 @@ public class MemberDAO {
 			pstmt.setString(2, memberDTO.getPasswd());
 			rs = pstmt.executeQuery();
 			
-			if(!rs.next()) {
+			if(rs.next()) {
 				
 				isLogin = true;
 			}
@@ -90,5 +90,61 @@ public class MemberDAO {
 		return isLogin;
 	}
 	
+	public boolean deleteMember(MemberDTO memberDTO) {
+		boolean isDelete = false;
+		
+		try {
+			getConnection();
+			pstmt = conn.prepareStatement("select * from member where member_id = ? and passwd=?");
+			pstmt.setString(1, memberDTO.getMemberId());
+			pstmt.setString(2, memberDTO.getPasswd());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				pstmt = conn.prepareStatement("delete from member where member_id=?");
+				pstmt.setString(1, memberDTO.getMemberId());
+				pstmt.executeUpdate();
+				isDelete = true;
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			getClose();
+		}
+		return isDelete;
+	}
+	
+	
+	
+	public boolean updateMember(MemberDTO memberDTO) {
+		
+		boolean isUpdate = false;
+		
+		try {
+			
+			getConnection();
+			pstmt = conn.prepareStatement("SELECT * FROM MEMBER WHERE MEMBER_ID = ? AND PASSWD = ?");
+			pstmt.setString(1, memberDTO.getMemberId());
+			pstmt.setString(2, memberDTO.getPasswd());
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				pstmt = conn.prepareStatement("UPDATE MEMBER SET NAME = ? WHERE MEMBER_ID = ?");
+				pstmt.setString(1, memberDTO.getName());
+				pstmt.setString(2, memberDTO.getMemberId());
+				pstmt.executeUpdate();
+				isUpdate = true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			getClose();
+		}
+		
+		return isUpdate;
+		
+	}
 	
 }
